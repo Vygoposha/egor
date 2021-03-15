@@ -21,13 +21,15 @@ category4 = Category.objects.create(category_name='Криминал')
 # Добавить 2 статьи и 1 новость.
 article1 = Post.objects.create(author=author1,
                                post_type=Post.article,
-                               post_title='Заголовок статьи 1',
+                               post_title='Заголовок слово1 статьи 1',  # слово1 - цензурируемое
                                post_content='Текст статьи 1',
                                )
 article2 = Post.objects.create(author=author1,
                                post_type=Post.article,
                                post_title='Заголовок статьи 2',
-                               post_content='Текст статьи 2',
+                               post_content='Текст статьи 2. Пример '
+                                            'цензурируемого слова в тексте '
+                                            'статьи - СЛОВО2!',  # слово2 - цензурируемое
                                )
 news1 = Post.objects.create(author=author2,
                             post_type=Post.news,
@@ -129,3 +131,8 @@ comment1 = Comment.objects.get(id=1)
 comment2 = Comment.objects.get(id=2)
 comment3 = Comment.objects.get(id=3)
 comment4 = Comment.objects.get(id=3)
+
+# article1.post_title = 'Заголовок слово1 статьи 1'
+# article1.save()
+# article2.post_content = 'Текст статьи 2. Пример цензурируемого слова в тексте статьи - СЛОВО2!'
+# article2.save()

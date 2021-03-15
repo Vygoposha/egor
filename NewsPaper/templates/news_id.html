@@ -1,0 +1,12 @@
+{% extends 'flatpages/default.html' %}
+
+{% load censor %}
+
+{% block title %}
+News
+{% endblock title %}
+
+{% block content %}
+    <h1 style="text-align: center;">{{ news_id.post_title|censor }}, {{ news_id.post_datetime|date:'d M Y' }}</h1>
+    <p style="text-align: left;">{{ news_id.post_content|censor }}</p>
+{% endblock content %}
