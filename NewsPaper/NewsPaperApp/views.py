@@ -1,5 +1,6 @@
 from django.views.generic import ListView, DetailView  # импортируем класс получения деталей объекта
 from .models import Post
+from .filters import PostFilter
 
 
 class NewsList(ListView):
@@ -11,6 +12,7 @@ class NewsList(ListView):
     # все объекты, его надо указать, чтобы обратиться к самому списку
     # объектов через html-шаблон
     queryset = Post.objects.order_by('-post_datetime')
+    paginate_by = 2
 
 
 class NewsDetail(DetailView):
@@ -18,3 +20,15 @@ class NewsDetail(DetailView):
     # отдельного товара
     template_name = 'news_id.html'  # название шаблона будет product.html
     context_object_name = 'news_id'  # название объекта. в нём будет
+
+
+class NewsSearch(ListView):
+    model = Post
+    template_name = 'news_search.html'
+    context_object_name = 'news'
+    queryset = Post.objects.order_by('-post_datetime')
+
+    def get_context_data(self, **kwargs): # забираем отфильтрованные объекты переопределяя метод get_context_data у наследуемого класса (привет полиморфизм, мы скучали!!!)
+        context = super().get_context_data(**kwargs)
+        context['filter'] = PostFilter(self.request.GET, queryset=self.get_queryset())  # вписываем наш фильтр в контекст
+        return context

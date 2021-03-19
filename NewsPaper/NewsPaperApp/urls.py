@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import NewsList, NewsDetail  # импортируем наше представление
+from .views import NewsList, NewsDetail, NewsSearch  # импортируем наше представление
 
 urlpatterns = [
     # path — означает путь. В данном случае путь ко всем товарам у нас
@@ -9,5 +9,6 @@ urlpatterns = [
     # view. Для этого вызываем метод as_view
     path('<int:pk>', NewsDetail.as_view()),
     # pk — это первичный ключ товара, который будет выводиться у нас в шаблон
+    path('search/', NewsSearch.as_view()),
 
 ]

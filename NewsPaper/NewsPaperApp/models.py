@@ -28,6 +28,10 @@ class Author(models.Model):
                              comments_posts_total_rating
         self.save()
 
+    # def __str__(self):
+    #     return self.author.username
+
+
 
 class Category(models.Model):
     category_name = models.CharField(max_length=50, unique=True)

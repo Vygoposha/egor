@@ -36,6 +36,12 @@ news1 = Post.objects.create(author=author2,
                             post_title='Заголовок новости 1',
                             post_content='Текст новости 1',
                             )
+news2 = Post.objects.create(author=author1,
+                            post_type=Post.news,
+                            post_title='Заголовок новости 2',
+                            post_content='Текст новости 2',
+                            )
+
 
 # Присвоить им категории (как минимум в одной статье/новости должно быть не
 # меньше 2 категорий).
@@ -43,6 +49,7 @@ article1.post_category.add(category1)
 article1.post_category.add(category2)
 article2.post_category.add(category3)
 news1.post_category.add(category4)
+news2.post_category.add(category3)
 
 # Создать как минимум 4 комментария к разным объектам модели Post (в каждом
 # объекте должен быть как минимум один комментарий).
@@ -116,6 +123,9 @@ Comment.objects.filter(post=top_post[0]).values('comment_datetime',
 
 
 # Переопределение переменных в случае перезапуска Shell
+from NewsPaperApp.models import Author, Category, Post, Comment
+from django.contrib.auth.models import User
+
 user1 = User.objects.get(id=1)
 user2 = User.objects.get(id=2)
 author1 = Author.objects.get(id=1)
@@ -127,6 +137,7 @@ category4 = Category.objects.get(id=4)
 article1 = Post.objects.get(id=1)
 article2 = Post.objects.get(id=2)
 news1 = Post.objects.get(id=3)
+news2 = Post.objects.get(id=4)
 comment1 = Comment.objects.get(id=1)
 comment2 = Comment.objects.get(id=2)
 comment3 = Comment.objects.get(id=3)
