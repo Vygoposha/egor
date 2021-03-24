@@ -1,0 +1,19 @@
+{% extends 'flatpages/default.html' %}
+
+{% block title %}
+News Add
+{% endblock title %}
+
+{% block content %}
+<h3>Добавление новости</h3>
+<hr>
+<form method="POST">
+    {% csrf_token %}
+    <p style="text-align: left;">
+        {% for field in form %}
+            {{ field }} {{ field.name }}<br> <!-- Теперь нам нужна только готовая форма и кнопка -->
+        {% endfor %}
+        <input type="submit" value="Добавить новость">
+    </p>
+</form>
+{% endblock content %}

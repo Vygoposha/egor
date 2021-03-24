@@ -7,12 +7,17 @@ News Search
 {% endblock title %}
 
 {% block content %}
-    <h1>Всего новостей - {{ news|length }}</h1>
+    <h3>Всего новостей - {{ news|length }}</h3>
     <hr>
     {% if news %}
         <form method="GET">
-            {{ filter.form }} <!-- Форму от фильтров за нас сделает django. А вот кнопку, увы придётся делать самому -->
-            <input type="submit" value="Найти">
+            <p style="text-align: left;">
+                Поиск новости<br>
+                {% for field in filter.form %}
+                    {{ field }} {{ field.name }}<br>
+                {% endfor %}
+                <input type="submit" value="Найти">
+            </p>
         </form>
 
         <table>

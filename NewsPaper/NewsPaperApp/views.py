@@ -1,7 +1,8 @@
-from django.views.generic import ListView, DetailView  # импортируем класс получения деталей объекта
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView  # импортируем класс получения деталей объекта
+
 from .models import Post
 from .filters import PostFilter
-
+from .forms import NewsForm
 
 class NewsList(ListView):
     model = Post  # указываем модель, объекты которой мы будем выводить
@@ -32,3 +33,27 @@ class NewsSearch(ListView):
         context = super().get_context_data(**kwargs)
         context['filter'] = PostFilter(self.request.GET, queryset=self.get_queryset())  # вписываем наш фильтр в контекст
         return context
+
+
+class NewsCreateView(CreateView):
+    template_name = 'news_add.html'
+    form_class = NewsForm
+
+
+class NewsUpdateView(UpdateView):
+    template_name = 'news_add.html'
+    form_class = NewsForm
+
+    def get_object(self, **kwargs):
+        id = self.kwargs.get('pk')
+        return Post.objects.get(pk=id)
+
+
+class NewsDeleteView(DeleteView):
+    template_name = 'news_delete.html'
+    context_object_name = 'news_id'
+    queryset = Post.objects.all()
+    success_url = '/news/'
+
+
+

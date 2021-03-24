@@ -3,10 +3,17 @@
 {% load censor %}
 
 {% block title %}
-News
+News Delete
 {% endblock title %}
 
 {% block content %}
+    <h3>Вы действительно хотите удалить данную новость?</h3>
+    <hr>
     <h3 style="text-align: center;">{{ news_id.post_title|censor }}, {{ news_id.post_datetime|date:'d M Y' }}</h3>
     <p style="text-align: left;">{{ news_id.post_content|censor }}</p>
+    <hr>
+    <form method="POST">
+    {% csrf_token %}
+    <input type="submit" value="подтвердить">
+    </form>
 {% endblock content %}

@@ -7,7 +7,7 @@ News
 {% endblock title %}
 
 {% block content %}
-    <h1>Всего новостей - {{ news|length }}</h1>
+    <h3>Всего новостей - {{ news|length }}</h3>
     <hr>
     {% if news %}
         <table>
@@ -25,7 +25,9 @@ News
         {% for news_id in news %} <!-- Для каждого товара будете генерироваться новая строчка, т.е. новый html код. При этом сам цикл работет точно также, как и в python. product — переменная цикла, т.е. наш товар взятый из общего списка -->
             <tr>
                 <td>
-                    <a class="nav-link" href="http://127.0.0.1:8000/news/{{ news_id.id }}">{{ news_id.post_title|censor }}</a>
+                    <a href="{% url 'news' news_id.id %}">{{ news_id.post_title|censor }}</a><br>
+                    <a href="{% url 'news_edit' news_id.id %}">Редактировать</a>
+                    <a href="{% url 'news_delete' news_id.id %}">Удалить</a>
                 </td>
                 <td>
                     {{ news_id.post_datetime|date:'d M Y' }} <!-- дописываем специальный фильтр, чтобы ограничить количество символов до 20. Все остальные символы превратятся в многоточие. -->

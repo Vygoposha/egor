@@ -28,8 +28,8 @@ class Author(models.Model):
                              comments_posts_total_rating
         self.save()
 
-    # def __str__(self):
-    #     return self.author.username
+    def __str__(self):
+        return self.author.username
 
 
 
@@ -69,6 +69,8 @@ class Post(models.Model):
     def __str__(self):
         return f'{self.post_title.title()}: {self.post_content[:20]}'
 
+    def get_absolute_url(self):
+        return f'/news/{self.id}'
 
 
 class PostCategory(models.Model):
