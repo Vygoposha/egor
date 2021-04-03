@@ -8,3 +8,5 @@ class PostFilter(FilterSet):
     class Meta:
         model = Post
         fields = {'post_datetime': ['gt'], 'post_title': ['icontains'], 'author': ['exact']}  # поля которые мы будем фильтровать (т.е. отбирать по каким-то критериям, имена берутся из моделей)
+
+

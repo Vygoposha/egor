@@ -1,0 +1,27 @@
+{% extends 'flatpages/default.html' %}
+{% load group_list %}
+
+{% block title %}
+Edit Profile
+{% endblock title %}
+
+{% block content %}
+<h3>Редактирование профиля</h3>
+<hr>
+<form method="POST">
+    {% csrf_token %}
+    <p style="text-align: left;">
+        {% for field in form %}
+            {{ field }} {{ field.name }}<br> <!-- Теперь нам нужна только готовая форма и кнопка -->
+        {% endfor %}
+        Ваш статус -
+        {% for group in user|group_list %}
+            {{ group }}
+        {% endfor %} <br>
+        {% if "authors" not in user|group_list %}
+        <button formaction="{% url 'upgrade' %}">Стать автором</button><br>
+        {% endif %}
+        <input type="submit" value="Сохранить изменения">
+    </p>
+</form>
+{% endblock content %}

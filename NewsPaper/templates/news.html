@@ -1,6 +1,8 @@
 {% extends 'flatpages/default.html' %}
 
 {% load censor %}
+{% load group_list %}
+
 
 {% block title %}
 News
@@ -27,7 +29,9 @@ News
                 <td>
                     <a href="{% url 'news' news_id.id %}">{{ news_id.post_title|censor }}</a><br>
                     <a href="{% url 'news_edit' news_id.id %}">Редактировать</a>
-                    <a href="{% url 'news_delete' news_id.id %}">Удалить</a>
+                    {% if "authors" in user|group_list %}
+                        <a href="{% url 'news_delete' news_id.id %}">Удалить</a>
+                    {% endif %}
                 </td>
                 <td>
                     {{ news_id.post_datetime|date:'d M Y' }} <!-- дописываем специальный фильтр, чтобы ограничить количество символов до 20. Все остальные символы превратятся в многоточие. -->
@@ -63,5 +67,4 @@ News
         <h2>Новостей нет!</h2>
     {% endif %}
 
-<!--    {{ posts }}-->
 {% endblock content %}

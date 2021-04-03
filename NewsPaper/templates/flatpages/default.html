@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 {% load static %}
+{% load group_list %}
 
 <head>
 
@@ -41,13 +42,23 @@
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/news/add">Add</a>
-<!--          </li>-->
-<!--          <li class="nav-item">-->
-<!--            <a class="nav-link" href="#">Contacts</a>-->
-<!--          </li>-->
-<!--          <li class="nav-item">-->
-<!--            <a class="nav-link" href="#">Location</a>-->
-<!--          </li>-->
+          </li>
+          {% if not user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="/accounts/login/">LogIn</a>
+          </li>
+          {% endif %}
+          {% if user.is_authenticated %}
+            <li class="nav-item">
+              <a class="nav-link" href="/accounts/logout/">LogOut</a>
+            </li>
+          {% endif %}
+          {% if user.is_authenticated %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'user_profile' user.id %}">Profile</a>
+            </li>
+          {% endif %}
+
         </ul>
       </div>
     </div>

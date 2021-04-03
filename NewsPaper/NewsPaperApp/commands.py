@@ -1,4 +1,4 @@
-from NewsPaperApp.models import Author, Category, Post, Comment
+from NewsPaper.NewsPaperApp.models import Author, Category, Post, Comment
 from django.contrib.auth.models import User
 
 
@@ -142,6 +142,10 @@ comment1 = Comment.objects.get(id=1)
 comment2 = Comment.objects.get(id=2)
 comment3 = Comment.objects.get(id=3)
 comment4 = Comment.objects.get(id=3)
+
+user1.email = 'user1@user1.com'
+user2.email = 'user2@user2.com'
+
 
 # article1.post_title = 'Заголовок слово1 статьи 1'
 # article1.save()
