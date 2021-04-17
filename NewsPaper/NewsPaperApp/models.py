@@ -3,6 +3,9 @@ from django.contrib.auth.models import User
 
 
 # Create your models here.
+from django.http import HttpRequest
+
+
 class Author(models.Model):
     author = models.OneToOneField(User, on_delete=models.CASCADE)
     author_rating = models.IntegerField(default=0)
@@ -32,9 +35,11 @@ class Author(models.Model):
         return self.author.username
 
 
-
 class Category(models.Model):
     category_name = models.CharField(max_length=50, unique=True)
+    subscribers = models.ManyToManyField(User,
+                                         verbose_name='Подписчики',
+                                         blank=True)
 
     def __str__(self):
         return self.category_name
@@ -54,9 +59,6 @@ class Post(models.Model):
     post_title = models.CharField(max_length=255)
     post_content = models.TextField()
     post_rating = models.IntegerField(default=0)
-
-    # def __str__(self):
-    #     return self.post_title
 
     def like(self):
         self.post_rating += 1

@@ -1,0 +1,13 @@
+{% extends 'flatpages/default.html' %}
+
+{% load censor %}
+
+{% block title %}
+News
+{% endblock title %}
+
+{% block content %}
+    <h3 style="text-align: center;">Здравствуй, {{ username }}. Новая статья в твоём любимом разделе!</h3>
+    <p style="text-align: left;">{{ news.post_title|censor|truncatechars:20 }}</p>
+    <a style="text-align: left;" href="http://127.0.0.1:8000{% url 'news' news.id %}">{{ news.post_content|censor|truncatechars:50 }}</a>
+{% endblock content %}

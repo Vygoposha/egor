@@ -2,6 +2,7 @@
 
 {% load censor %}
 {% load group_list %}
+{% load subscribers_list %}
 
 
 {% block title %}
@@ -9,7 +10,7 @@ News
 {% endblock title %}
 
 {% block content %}
-    <h3>Всего новостей - {{ news|length }}</h3>
+    <h3>Всего новостей - {{ post_count }}</h3>
     <hr>
     {% if news %}
         <table>
@@ -23,21 +24,67 @@ News
                 <td>
                     Превью
                 </td>
+                <td>
+                    Категория
+                </td>
             </tr>
         {% for news_id in news %} <!-- Для каждого товара будете генерироваться новая строчка, т.е. новый html код. При этом сам цикл работет точно также, как и в python. product — переменная цикла, т.е. наш товар взятый из общего списка -->
             <tr>
                 <td>
-                    <a href="{% url 'news' news_id.id %}">{{ news_id.post_title|censor }}</a><br>
-                    <a href="{% url 'news_edit' news_id.id %}">Редактировать</a>
-                    {% if "authors" in user|group_list %}
-                        <a href="{% url 'news_delete' news_id.id %}">Удалить</a>
-                    {% endif %}
+                    <table>
+                        <tr>
+                            <a href="{% url 'news' news_id.id %}">{{ news_id.post_title|censor }}</a><br>
+                        </tr>
+                        <tr>
+                            <a href="{% url 'news_edit' news_id.id %}">Редактировать </a>
+                            {% if "authors" in user|group_list %}
+                                <a href="{% url 'news_delete' news_id.id %}">Удалить</a>
+                            {% endif %}
+                        </tr>
+                    </table>
+<!--                    <a href="{% url 'news' news_id.id %}">{{ news_id.post_title|censor }}</a><br>-->
                 </td>
                 <td>
                     {{ news_id.post_datetime|date:'d M Y' }} <!-- дописываем специальный фильтр, чтобы ограничить количество символов до 20. Все остальные символы превратятся в многоточие. -->
                 </td>
                 <td>
                     {{ news_id.post_content|censor|truncatechars:20 }}
+                </td>
+                <td>
+
+                    <table>
+                        <tr>
+                            {% for category in news_id.post_category.all %}
+                                <td>
+                                    {{ category.category_name }}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                        <tr>
+                            {% for category in news_id.post_category.all %}
+                                <td>
+                                    {% if user.username in category|subscribers_list %}
+                                        <form action="{% url 'subscribe' category.pk %}" method="POST">
+                                            {% csrf_token%}
+                                            <button type="submit" name="category_id" value="{{ category.id }}">Отписаться</button>
+                                        </form>
+                                    {% else %}
+                                        <form action="{% url 'subscribe' category.pk %}" method="POST">
+                                            {% csrf_token%}
+                                            <button type="submit" name="category_id" value="{{ category.id }}">Подписаться</button>
+                                        </form>
+                                    {% endif %}
+                                </td>
+                            {% endfor %}
+                        </tr>
+                    </table>
+
+<!--                    {{ news_id.post_category.category_name }}-->
+
+<!--                    {% for category in news_id.post_category.all %}-->
+<!--                        {{ category.category_name }}-->
+<!--                    {% endfor %}-->
+
                 </td>
             </tr>
         {% endfor %}

@@ -1,0 +1,15 @@
+{% extends 'flatpages/default.html' %}
+
+{% load censor %}
+
+{% block title %}
+News
+{% endblock title %}
+
+{% block content %}
+    <h3 style="text-align: center;">Здравствуй, {{ username }}. Еженедельная подборка новостей!</h3>
+    {% for news_id in news %}
+        <p style="text-align: left;">{{ news_id.post_datetime }} - {{ news_id.post_title|censor|truncatechars:20 }}</p>
+        <a style="text-align: left;" href="http://127.0.0.1:8000{% url 'news' news_id.id %}">{{ news_id.post_content|censor|truncatechars:50 }}</a>
+    {% endfor %}
+{% endblock content %}

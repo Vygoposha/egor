@@ -123,7 +123,7 @@ Comment.objects.filter(post=top_post[0]).values('comment_datetime',
 
 
 # Переопределение переменных в случае перезапуска Shell
-from NewsPaperApp.models import Author, Category, Post, Comment
+from NewsPaperApp.models import Author, Category, Post, Comment, User
 from django.contrib.auth.models import User
 
 user1 = User.objects.get(id=1)
@@ -143,6 +143,19 @@ comment2 = Comment.objects.get(id=2)
 comment3 = Comment.objects.get(id=3)
 comment4 = Comment.objects.get(id=3)
 
+category2.subscribers.all().values_list('username', flat=True)
+
+for category in article1.post_category.all():
+    category.subscribers.all()
+
+article1.post_category.all().values_list('subscribers__username', flat=True)
+
+article1.post_category.all().values('subscribers')
+
+article1.post_category.all().values_list('subscribers__username', flat=True)
+list(article1.post_category.all().values_list('subscribers', flat=True))
+
+
 user1.email = 'user1@user1.com'
 user2.email = 'user2@user2.com'
 
@@ -151,3 +164,10 @@ user2.email = 'user2@user2.com'
 # article1.save()
 # article2.post_content = 'Текст статьи 2. Пример цензурируемого слова в тексте статьи - СЛОВО2!'
 # article2.save()
+
+Author.objects.all()
+Author.objects.filter(author_id=8).exists()
+
+Author.objects.create(author_id=8).save()
+
+User.objects.filter(username='Egorza').values('id')

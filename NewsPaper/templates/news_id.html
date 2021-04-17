@@ -1,6 +1,7 @@
 {% extends 'flatpages/default.html' %}
 
 {% load censor %}
+{% load subscribers_list %}
 
 {% block title %}
 News
@@ -8,5 +9,34 @@ News
 
 {% block content %}
     <h3 style="text-align: center;">{{ news_id.post_title|censor }}, {{ news_id.post_datetime|date:'d M Y' }}</h3>
-    <p style="text-align: left;">{{ news_id.post_content|censor }}</p>
+    <p style="text-align: left;">{{ news_id.post_content|censor }}</p><br>
+    <p style="text-align: left;">Категории:</p>
+    <table>
+        <tr>
+            {% for category in news_id.post_category.all %}
+                <td>
+                    {{ category.category_name }}
+                </td>
+            {% endfor %}
+        </tr>
+        <tr>
+            {% for category in news_id.post_category.all %}
+                <td>
+                    {% if user.username in category|subscribers_list %}
+                        <form action="{% url 'subscribe' category.pk %}" method="POST">
+                            {% csrf_token%}
+                            <button type="submit" name="category_id" value="{{ category.id }}">Отписаться</button>
+                        </form>
+                    {% else %}
+                        <form action="{% url 'subscribe' category.pk %}" method="POST">
+                            {% csrf_token%}
+                            <button type="submit" name="category_id" value="{{ category.id }}">Подписаться</button>
+                        </form>
+                    {% endif %}
+                </td>
+            {% endfor %}
+        </tr>
+    </table><br>
+    <p style="text-align: left;">Автор: {{ news_id.author }}</p>
+
 {% endblock content %}
