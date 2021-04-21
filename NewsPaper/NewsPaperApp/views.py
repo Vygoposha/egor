@@ -1,11 +1,17 @@
-import datetime
+from datetime import datetime, timedelta, date
 
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView  # импортируем класс получения деталей объекта
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin, PermissionRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group, User
 from django.shortcuts import redirect, render
 
+from django.http import HttpResponse
+from django.views import View
+
+from .tasks import news_create_notify, news_weekly_notify
 from .models import Post, Category, Author
 from .filters import PostFilter
 from .forms import NewsForm, UserForm
@@ -58,12 +64,17 @@ class NewsCreateView(PermissionRequiredMixin, CreateView):
         news_day_limit = 3
         author = Author.objects.get(author=self.request.user)
         form.instance.author = author
+        form.save()
 
-        if len(Post.objects.filter(author=author, post_datetime__date=datetime.date.today())) > news_day_limit:
+        if len(Post.objects.filter(author=author, post_datetime__date=date.today())) > news_day_limit:
             return redirect('/news/day_limit')
         else:
-            return super().form_valid(form)
+            print('*******')
+            print(list(form.instance.post_category.all().values_list('subscribers', flat=True)))
+            subscribers = list(form.instance.post_category.all().values_list('subscribers', flat=True))
+            news_create_notify.delay(users_id=subscribers, news_id=form.instance.id)
 
+            return super().form_valid(form)
 
     # def post(self, request, *args, **kwargs):
     #     author = request.POST.get('user')
@@ -79,6 +90,9 @@ class NewsCreateView(PermissionRequiredMixin, CreateView):
     #                 )
     #     news.save()
     #     news.post_category.add(post_category)
+    #
+    #     print('----------------')
+    #     print(news.post_category.all())
     #
     #     for user_id in list(news.post_category.all().values_list('subscribers', flat=True)):
     #         user = User.objects.get(id=user_id)
@@ -158,3 +172,10 @@ def subscribe(request, pk):
     else:
         category.subscribers.add(request.user)
     return redirect(request.META.get('HTTP_REFERER'))
+
+
+# вьюшка для тестирования celery
+class IndexView(View):
+    def get(self, request):
+        news_weekly_notify.delay()
+        return HttpResponse('Hello!')

@@ -31,7 +31,7 @@ def my_job():
                 notify_dict.update({subscriber: Post.objects.filter(post_category=category,
                                                                     post_datetime__gte=post_datetime_filter)})
             else:
-                                notify_dict[subscriber] = notify_dict[subscriber].union(Post.objects.filter(post_category=category,
+                notify_dict[subscriber] = notify_dict[subscriber].union(Post.objects.filter(post_category=category,
                                                                                             post_datetime__gte=post_datetime_filter)).order_by('post_datetime')
 
     subject = 'Подборка новостей за неделю'

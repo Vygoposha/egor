@@ -1,7 +1,7 @@
 from django.urls import path
 from django.views.generic import TemplateView
 from .views import NewsList, NewsDetail, NewsSearch, NewsCreateView, \
-    NewsUpdateView, NewsDeleteView, subscribe
+    NewsUpdateView, NewsDeleteView, subscribe, IndexView
 
 urlpatterns = [
     # path — означает путь. В данном случае путь ко всем товарам у нас
@@ -17,4 +17,7 @@ urlpatterns = [
     path('<int:pk>/delete', NewsDeleteView.as_view(), name='news_delete'),
     path('subscribe/<int:pk>', subscribe, name='subscribe'),
     path('day_limit/', TemplateView.as_view(template_name='news_day_limit.html')),
+    path('test/', IndexView.as_view()),
+
 ]
+
