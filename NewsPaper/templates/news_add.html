@@ -10,9 +10,10 @@ News Add
 <form method="POST">
     {% csrf_token %}
     <p style="text-align: left;">
-        {% for field in form %}
-            {{ field }} {{ field.name }}<br> <!-- Теперь нам нужна только готовая форма и кнопка -->
-        {% endfor %}
+        {{ form }}
+<!--        {% for field in form %}-->
+<!--            {{ field }} {{ field.name }}<br> &lt;!&ndash; Теперь нам нужна только готовая форма и кнопка &ndash;&gt;-->
+<!--        {% endfor %}-->
         <input type="submit" value="Добавить новость">
     </p>
 </form>

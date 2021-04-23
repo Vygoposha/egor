@@ -10,9 +10,12 @@ News
 {% block content %}
     <h3 style="text-align: center;">{{ news_id.post_title|censor }}, {{ news_id.post_datetime|date:'d M Y' }}</h3>
     <p style="text-align: left;">{{ news_id.post_content|censor }}</p><br>
-    <p style="text-align: left;">Категории:</p>
+    <p style="text-align: left;">Автор: {{ news_id.author }}</p><br>
     <table>
         <tr>
+            <td>
+                <p style="text-align: left;">Категории:</p>
+            </td>
             {% for category in news_id.post_category.all %}
                 <td>
                     {{ category.category_name }}
@@ -20,6 +23,9 @@ News
             {% endfor %}
         </tr>
         <tr>
+            <td>
+
+            </td>
             {% for category in news_id.post_category.all %}
                 <td>
                     {% if user.username in category|subscribers_list %}
@@ -36,7 +42,6 @@ News
                 </td>
             {% endfor %}
         </tr>
-    </table><br>
-    <p style="text-align: left;">Автор: {{ news_id.author }}</p>
+    </table>
 
 {% endblock content %}

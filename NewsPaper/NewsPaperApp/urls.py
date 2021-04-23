@@ -1,12 +1,14 @@
 from django.urls import path
 from django.views.generic import TemplateView
 from .views import NewsList, NewsDetail, NewsSearch, NewsCreateView, \
-    NewsUpdateView, NewsDeleteView, subscribe, IndexView
+    NewsUpdateView, NewsDeleteView, subscribe, IndexView, NewsCategory
+from django.views.decorators.cache import cache_page
+
 
 urlpatterns = [
     # path — означает путь. В данном случае путь ко всем товарам у нас
     # останется пустым, позже станет ясно почему
-    path('', NewsList.as_view()),
+    path('', cache_page(60*1)(NewsList.as_view())),
     # т.к. сам по себе это класс, то нам надо представить этот класс в виде
     # view. Для этого вызываем метод as_view
     path('<int:pk>', NewsDetail.as_view(), name='news'),
@@ -18,6 +20,7 @@ urlpatterns = [
     path('subscribe/<int:pk>', subscribe, name='subscribe'),
     path('day_limit/', TemplateView.as_view(template_name='news_day_limit.html')),
     path('test/', IndexView.as_view()),
+    path('category/<int:pk>', cache_page(60*5)(NewsCategory.as_view()), name='news_category'),
 
 ]
 

@@ -7,8 +7,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin, 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import Group, User
 from django.shortcuts import redirect, render
+from django.core.cache import cache  # импортируем наш кэш
 
-from django.http import HttpResponse
+
+from django.http import HttpResponse, HttpRequest
 from django.views import View
 
 from .tasks import news_create_notify, news_weekly_notify
@@ -31,6 +33,7 @@ class NewsList(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['post_count'] = len(Post.objects.all())
+
         return context
 
 
@@ -38,6 +41,19 @@ class NewsDetail(DetailView):
     model = Post
     template_name = 'news_id.html'
     context_object_name = 'news_id'
+
+    def get_object(self, *args, **kwargs):  # переопределяем метод получения объекта, как ни странно
+        obj = cache.get(f'news-{self.kwargs["pk"]}',None)  # кэш очень похож на словарь, и метод get действует также. Он забирает значение по ключу, если его нет, то забирает None.
+
+        # если объекта нет в кэше, то получаем его и записываем в кэш
+        if not obj:
+            obj = super().get_object()
+            cache.set(f'news-{self.kwargs["pk"]}', obj)
+            print('Set obj to cash')
+        else:
+            print('Get obj from cash')
+
+        return obj
 
 
 class NewsSearch(ListView):
@@ -61,20 +77,24 @@ class NewsCreateView(PermissionRequiredMixin, CreateView):
                            )
 
     def form_valid(self, form):
-        news_day_limit = 3
         author = Author.objects.get(author=self.request.user)
         form.instance.author = author
+
         form.save()
+        subscribers_set = set(form.instance.post_category.all().values_list('subscribers', flat=True))
+        subscribers_list = list(subscribers_set)
+        news_create_notify.delay(users_id=subscribers_list, news_id=form.instance.id)
 
-        if len(Post.objects.filter(author=author, post_datetime__date=date.today())) > news_day_limit:
+        return super().form_valid(form)
+
+    def get(self, request, *args, **kwargs):
+        author = Author.objects.get(author=self.request.user)
+        news_day_limit = 3
+
+        if len(Post.objects.filter(author=author, post_datetime__date=date.today())) >= news_day_limit:
             return redirect('/news/day_limit')
-        else:
-            print('*******')
-            print(list(form.instance.post_category.all().values_list('subscribers', flat=True)))
-            subscribers = list(form.instance.post_category.all().values_list('subscribers', flat=True))
-            news_create_notify.delay(users_id=subscribers, news_id=form.instance.id)
 
-            return super().form_valid(form)
+        return super().get(request, *args, **kwargs)
 
     # def post(self, request, *args, **kwargs):
     #     author = request.POST.get('user')
@@ -179,3 +199,31 @@ class IndexView(View):
     def get(self, request):
         news_weekly_notify.delay()
         return HttpResponse('Hello!')
+
+
+#вьющка для вывода постов по категориям
+class NewsCategory(ListView):
+    model = Post  # указываем модель, объекты которой мы будем выводить
+    template_name = 'news_category.html'  # указываем имя шаблона, в котором будет
+    # лежать html, в котором будут все инструкции о том, как именно
+    # пользователю должны вывестись наши объекты
+    context_object_name = 'news'  # это имя списка, в котором будут лежать
+    # все объекты, его надо указать, чтобы обратиться к самому списку
+    # объектов через html-шаблон
+    queryset = Post.objects.order_by('-post_datetime')
+    paginate_by = 10
+
+    def get_queryset(self, **kwargs):
+        qs = super().get_queryset()
+        category_id = self.kwargs['pk']
+
+        return qs.filter(post_category__id=category_id)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        category_id = self.kwargs['pk']
+        context['post_count'] = len(Post.objects.filter(post_category__id=category_id))
+        context['category'] = Category.objects.get(id=category_id)
+
+        return context
+

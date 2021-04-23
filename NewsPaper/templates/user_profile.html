@@ -11,9 +11,7 @@ Edit Profile
 <form method="POST">
     {% csrf_token %}
     <p style="text-align: left;">
-        {% for field in form %}
-            {{ field }} {{ field.name }}<br> <!-- Теперь нам нужна только готовая форма и кнопка -->
-        {% endfor %}
+        {{ form }}
         Ваш статус -
         {% for group in user|group_list %}
             {{ group }}

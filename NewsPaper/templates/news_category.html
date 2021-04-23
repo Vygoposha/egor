@@ -10,7 +10,7 @@ News
 {% endblock title %}
 
 {% block content %}
-    <h3>Всего новостей - {{ post_count }}</h3>
+    <h3>Всего новостей в категории {{ category.category_name }} - {{ post_count }}</h3>
     <hr>
     {% if news %}
         <table border="1">

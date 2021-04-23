@@ -171,3 +171,6 @@ Author.objects.filter(author_id=8).exists()
 Author.objects.create(author_id=8).save()
 
 User.objects.filter(username='Egorza').values('id')
+
+
+Category.objects.filter(id=1)

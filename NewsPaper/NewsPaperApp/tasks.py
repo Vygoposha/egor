@@ -1,3 +1,5 @@
+from time import sleep
+
 import pytz
 
 from celery import shared_task
@@ -11,23 +13,25 @@ from .models import Post, Category
 
 
 @shared_task
-def news_create_notify(users_id: list, news_id):
+def news_create_notify(users_id: list, news_id: int):
     news = Post.objects.get(id=news_id)
     for user_id in users_id:
-        user = User.objects.get(id=user_id)
-        html_content = render_to_string('news_create_notify.html',
-                                        {'news': news,
-                                         'username': user.username,
-                                         }
-                                        )
-        msg = EmailMultiAlternatives(
-            subject=f'{news.post_title}',
-            # body=news.post_content,  # это то же, что и message
-            from_email='epanisimov@yandex.ru',
-            to=[user.email],  # это то же, что и recipients_list
-            )
-        msg.attach_alternative(html_content, "text/html")  # добавляем html
-        msg.send()
+        if user_id:
+            user = User.objects.get(id=user_id)
+            html_content = render_to_string('news_create_notify.html',
+                                            {'news': news,
+                                             'username': user.username,
+                                             }
+                                            )
+            msg = EmailMultiAlternatives(
+                subject=f'{news.post_title}',
+                # body=news.post_content,  # это то же, что и message
+                from_email='epanisimov@yandex.ru',
+                to=[user.email],  # это то же, что и recipients_list
+                )
+            msg.attach_alternative(html_content, "text/html")  # добавляем html
+            msg.send()
+            sleep(10)
 
 
 @shared_task

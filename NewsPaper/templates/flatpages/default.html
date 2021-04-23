@@ -22,7 +22,8 @@
 </head>
 
 <body>
-
+  {% load cache %}
+  {% cache 300 header %}
   <!-- Navigation -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
     <div class="container">
@@ -63,6 +64,8 @@
       </div>
     </div>
   </nav>
+  {% endcache %}
+
 
   <!-- Page Content -->
   <div class="container">

@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -48,16 +49,16 @@ class Category(models.Model):
 class Post(models.Model):
     news = 'Новость'
     article = 'Статья'
-    Posts = [(news, 'Новость'), (article, 'Статья'), ('select', 'Выбрать')]
+    Posts = [(news, 'Новость'), (article, 'Статья')]
     author = models.ForeignKey(Author, on_delete=models.CASCADE,
                                verbose_name='Автор', blank=True,
                                null=True)
     post_type = models.CharField(max_length=30, choices=Posts,
                                  default='select', verbose_name='Тип')
     post_datetime = models.DateTimeField(auto_now_add=True)
-    post_category = models.ManyToManyField(Category, through='PostCategory')
-    post_title = models.CharField(max_length=255)
-    post_content = models.TextField()
+    post_category = models.ManyToManyField(Category, through='PostCategory', verbose_name='Категория')
+    post_title = models.CharField(max_length=255, verbose_name='Заголовок')
+    post_content = models.TextField(verbose_name='Содержание')
     post_rating = models.IntegerField(default=0)
 
     def like(self):
@@ -73,6 +74,10 @@ class Post(models.Model):
 
     def get_absolute_url(self):
         return f'/news/{self.id}'
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs) # сначала вызываем метод родителя, чтобы объект сохранился
+        cache.delete(f'news-{self.pk}') # затем удаляем его из кэша, чтобы сбросить его
 
 
 class PostCategory(models.Model):
