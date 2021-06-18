@@ -42,13 +42,12 @@ News
                             {% endif %}
                         </tr>
                     </table>
-<!--                    <a href="{% url 'news' news_id.id %}">{{ news_id.post_title|censor }}</a><br>-->
                 </td>
                 <td>
                     {{ news_id.post_datetime|date:'d M Y' }} <!-- дописываем специальный фильтр, чтобы ограничить количество символов до 20. Все остальные символы превратятся в многоточие. -->
                 </td>
                 <td align="left ">
-                    {{ news_id.post_content|censor|truncatechars:20 }}
+                    {{ news_id.post_content|censor|truncatechars:20 }}<br>
                 </td>
                 <td>
                     <table>
@@ -81,6 +80,7 @@ News
             </tr>
         {% endfor %}
         </table>
+
 
         {% if is_paginated %}
 

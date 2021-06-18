@@ -18,6 +18,10 @@ from .models import Post, Category, Author
 from .filters import PostFilter
 from .forms import NewsForm, UserForm
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 
 class NewsList(ListView):
     model = Post  # указываем модель, объекты которой мы будем выводить
@@ -30,6 +34,7 @@ class NewsList(ListView):
     queryset = Post.objects.order_by('-post_datetime')
     paginate_by = 10
 
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['post_count'] = len(Post.objects.all())
@@ -41,13 +46,17 @@ class NewsDetail(DetailView):
     model = Post
     template_name = 'news_id.html'
     context_object_name = 'news_id'
+    queryset = Post.objects.all()
 
     def get_object(self, *args, **kwargs):  # переопределяем метод получения объекта, как ни странно
         obj = cache.get(f'news-{self.kwargs["pk"]}',None)  # кэш очень похож на словарь, и метод get действует также. Он забирает значение по ключу, если его нет, то забирает None.
 
         # если объекта нет в кэше, то получаем его и записываем в кэш
+        print('*'*20)
+        print(kwargs)
         if not obj:
             obj = super().get_object()
+            print("Obj: ", obj)
             cache.set(f'news-{self.kwargs["pk"]}', obj)
             print('Set obj to cash')
         else:
@@ -194,10 +203,11 @@ def subscribe(request, pk):
     return redirect(request.META.get('HTTP_REFERER'))
 
 
-# вьюшка для тестирования celery
+# вьюшка для тестирования
 class IndexView(View):
     def get(self, request):
-        news_weekly_notify.delay()
+        # news_weekly_notify.delay()
+        logger.error('!!!!!!!!!!!!!!!!!')
         return HttpResponse('Hello!')
 
 

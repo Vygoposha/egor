@@ -174,3 +174,7 @@ User.objects.filter(username='Egorza').values('id')
 
 
 Category.objects.filter(id=1)
+
+list(Post.objects.filter(post_category__category_name='Наука').values_list('post_title', flat=True))
+
+list(Category.objects.all().values_list('category_name', flat=True))

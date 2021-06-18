@@ -23,7 +23,6 @@
 
 <body>
   {% load cache %}
-  {% cache 300 header %}
   <!-- Navigation -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
     <div class="container">
@@ -33,38 +32,39 @@
       </button>
       <div class="collapse navbar-collapse" id="navbarResponsive">
         <ul class="navbar-nav ml-auto">
-          <li class="nav-item active">
-            <a class="nav-link" href="/news">News
-              <span class="sr-only">(current)</span>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/news/search">Search</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/news/add">Add</a>
-          </li>
-          {% if not user.is_authenticated %}
-          <li class="nav-item">
-            <a class="nav-link" href="/accounts/login/">LogIn</a>
-          </li>
-          {% endif %}
-          {% if user.is_authenticated %}
-            <li class="nav-item">
-              <a class="nav-link" href="/accounts/logout/">LogOut</a>
-            </li>
-          {% endif %}
-          {% if user.is_authenticated %}
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'user_profile' user.id %}">Profile</a>
-            </li>
-          {% endif %}
+          {% cache 300 header %}
+              <li class="nav-item active">
+                <a class="nav-link" href="/news">News
+                  <span class="sr-only">(current)</span>
+                </a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/news/search">Search</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/news/add">Add</a>
+              </li>
+          {% endcache %}
+              {% if not user.is_authenticated %}
+              <li class="nav-item">
+                <a class="nav-link" href="/accounts/login/">LogIn</a>
+              </li>
+              {% endif %}
+              {% if user.is_authenticated %}
+                <li class="nav-item">
+                  <a class="nav-link" href="/accounts/logout/">LogOut</a>
+                </li>
+              {% endif %}
+              {% if user.is_authenticated %}
+                <li class="nav-item">
+                  <a class="nav-link" href="{% url 'user_profile' user.id %}">Profile</a>
+                </li>
+              {% endif %}
 
         </ul>
       </div>
     </div>
   </nav>
-  {% endcache %}
 
 
   <!-- Page Content -->

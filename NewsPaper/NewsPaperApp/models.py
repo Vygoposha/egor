@@ -78,6 +78,7 @@ class Post(models.Model):
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs) # сначала вызываем метод родителя, чтобы объект сохранился
         cache.delete(f'news-{self.pk}') # затем удаляем его из кэша, чтобы сбросить его
+        print('Obj was delete from cash')
 
 
 class PostCategory(models.Model):
